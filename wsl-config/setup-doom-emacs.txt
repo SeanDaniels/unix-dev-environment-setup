@@ -1,0 +1,54 @@
+#initial update upgrade
+sudo apt-get update
+sudo apt-get upgrade
+
+#add display options to .bashrc
+sudo vim /.bashrc
+export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2; exit;}'):0.0
+
+#get clang
+sudo apt-get install clang
+
+#get gzip (I think)
+sudo apt-get install zlib1g-dev
+
+curl -LO https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep_11.0.2_amd64.deb
+sudo dpkg -i ripgrep_11.0.2_amd64.deb
+
+wget https://github.com/sharkdp/fd/releases/download/v7.3.0/fd-musl_7.3.0_amd64.deb
+sudo dpkg -i fd-musl_7.3.0_amd64.deb
+
+sudo apt-get install clang-tools-8
+sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-8 100
+
+sudo apt-get install shellcheck
+
+sudo npm install -g marked
+
+#get ccls
+git clone --depth=1 --recursive https://github.com/MaskRay/ccls
+cd ccls
+
+#get clang/llvm tools
+#unzip and build tools
+wget -c http://releases.llvm.org/8.0.0/clang+llvm-8.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz
+tar xf clang+llvm-8.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz
+cmake -H. -BRelease -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=$PWD/clang+llvm-8.0.0-x86_64-linux-gnu-ubuntu-18.04
+cmake --build Release
+
+//tbd if this is a good move, doing it to test wsl remote
+//at this point, I have already installed mingw-64 tools, so this may cause some conflict
+sudo apt-get install build-essential gdb
+
+#emacs install
+sudo add-apt-repository ppa:kelleyk/emacs
+sudo apt-get update
+sudo apt-get install emacs26
+git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
+~/.emacs.d/bin/doom install
+#add doom bin to PATH
+export PATH=”$HOME/.emacs.d/bin:$PATH”~
+
+#Anaconda
+curl -O https://repo.anaconda.com/archive/Anaconda3-2019.03-Linux-x86_64.sh
+bash Anaconda3-2019.03-Linux-x86_64.sh
